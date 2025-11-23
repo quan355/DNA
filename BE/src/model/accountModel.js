@@ -4,7 +4,6 @@ const bcrypt = require("bcryptjs");
 const accountSchema = new Schema({
     profilePic: {
         type: String,
-        default: "public/ava.png",
     },
     phone: {
         type: String,
@@ -29,10 +28,11 @@ const accountSchema = new Schema({
         unique: true,
         required: true,
     },
-    recipesId :{
-      type: String,
-      unique: true,
-    }
+    country: { type: String },
+    city: { type: String},     
+    district: { type: String},
+    resetPasswordToken: String,          
+    resetPasswordExpires: Date,
 });
 // Mã hóa password trước khi lưu
 accountSchema.pre('save', async function (next) {

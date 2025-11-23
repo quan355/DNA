@@ -1,20 +1,17 @@
+require('dotenv').config();
 const Account = require('../model/accountModel');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'bodoivl', {
-    expiresIn: '1d',
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
-
-// @desc    Đăng nhập người dùng
-// @route   POST /api/auth/login
-// @access  Public
 const login = async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   // Kiểm tra input
-  if (!email || !password) {
+  if (!username || !password) {
     return res.status(400).json({
       success: false,
       message: 'Vui lòng nhập email và mật khẩu',
@@ -23,11 +20,11 @@ const login = async (req, res) => {
 
   try {
     // Tìm tài khoản theo email
-    const account = await Account.findOne({ email }).select('+password');
+    const account = await Account.findOne({ username }).select('+password');
     if (!account) {
       return res.status(401).json({
         success: false,
-        message: 'Email hoặc mật khẩu không đúng',
+        message: 'User name hoặc mật khẩu không đúng',
       });
     }
 
@@ -36,7 +33,7 @@ const login = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Email hoặc mật khẩu không đúng',
+        message: 'User name hoặc mật khẩu không đúng',
       });
     }
 

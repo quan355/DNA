@@ -4,7 +4,7 @@ import logo from '/logo.svg';
 import MobileNav from '../MobileNav';
 const Header = () => {
     const [hideLeft, setHideLeft] = useState("-left-[1000px]");
-    const menuItems = ["Recipes", "About", "Contact"];
+    const menuItems = ["Home","Recipes", "About", "Contact"];
     const onOpen = () => {
         setHideLeft("left-0");
     }

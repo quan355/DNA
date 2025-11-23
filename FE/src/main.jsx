@@ -18,7 +18,10 @@ import Login from './page/client/Login.jsx'
 import SignUp from './page/client/SignUp.jsx'
 import Profile from './page/client/Profile.jsx'
 import CreateProduct from './page/products/CreateProduct.jsx'
-
+import SearchByCreated from './page/SearchByCreated.jsx';
+import ForgotPassword from './page/client/ForgotPassword.jsx'
+import ResetPassword from './page/client/ResetPassword.jsx'
+import Admin from './page/admin/Admin.jsx'
 
 const router = createBrowserRouter([
   {
@@ -32,12 +35,26 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: '/forgotpassword',
+    element: <ForgotPassword />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: '/reset-password/:token',
+    element: <ResetPassword />,
+    errorElement: <ErrorPage />,
+  },
+  {
     path : "/",
     element: <App/>,
     errorElement: <ErrorPage/>,
     children: [
       {
         path: "/",
+        element: <Home/>,
+      },
+      {
+        path: "/home",
         element: <Home/>,
       },
       {
@@ -72,7 +89,11 @@ const router = createBrowserRouter([
       {
         path:"/create",
         element:<CreateProduct/>,
-      }
+      },
+      {
+        path:"/admin",
+        element:<Admin/>,
+      },
     ]
   },
 ]);

@@ -25,7 +25,7 @@ function CategoryList(){
             color="#3c3a8f"/>
             <CategoryItem name="lunch" href="/categories/lunch" backgroundColor="#e5f7f3"
             color="#1f8787"/>
-            <CategoryItem name="desserts" href="/categories/dessert" backgroundColor="e8f5fa"
+            <CategoryItem name="desserts" href="/categories/dessert" backgroundColor="#e8f5fa"
             color="#397a9e"/>
             <CategoryItem name="sides" href="/categories/sides" backgroundColor="#feefc9"
             color="#d16400"/>

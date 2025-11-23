@@ -1,0 +1,10 @@
+const express = require('express');
+const router = express.Router();
+const authMiddleware = require('../middleware/authMiddleware');
+const { isAdmin } = require('../middleware/isAdminMiddleware');
+const {getPendingRecipes,getPendingRecipeDetail,approveRecipe,rejectRecipe} = require('../controllers/adminController');
+router.get('/pending', authMiddleware, isAdmin, getPendingRecipes);
+router.get('/pending/:id', authMiddleware, isAdmin, getPendingRecipeDetail);
+router.put('/approve/:id', authMiddleware, isAdmin, approveRecipe);
+router.delete('/reject/:id', authMiddleware, isAdmin, rejectRecipe);
+module.exports = router;

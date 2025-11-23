@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -19,7 +19,7 @@ const Login = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
@@ -95,10 +95,10 @@ const Login = () => {
             </svg>
             <input
               className="pl-2 outline-none border-none w-full"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email Address"
+              type="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="User Name"
               required
             />
           </div>
@@ -150,9 +150,12 @@ const Login = () => {
           </div>
           {/* Forgot Password */}
           <div className="text-center">
+            <Link to="/forgotpassword">
             <span className="text-sm text-gray-600 hover:text-blue-500 cursor-pointer transition">
               Quên mật khẩu?
             </span>
+            </Link>
+            
           </div>
         </form>
       </div>

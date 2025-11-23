@@ -1,4 +1,5 @@
 const Item = require("../model/ItemModel");
+const wItem = require("../model/waitItemsModel");
 // GET: Lấy tất cả món ăn
 const getAllItems = async (req, res) => {
   const items = await Item.find().sort({ createdAt: -1 });
@@ -21,6 +22,30 @@ const getSearchedItems = async (req, res) => {
     res.status(500).json({ message: 'No Item Found!' });
   }
 };
+// GET: Lấy tất cả món ăn do người dùng tạo
+const getUserCreatedItems = async (req, res) => {
+  const { q } = req.query;
+
+  try {
+    let items;
+
+    if (q) {
+      const isObjectId = /^[0-9a-fA-F]{24}$/.test(q);
+
+      if (isObjectId) {
+        items = await Item.find({ createdBy: q }).sort({ createdAt: -1 });
+      } 
+    } else {
+      items = [];
+    }
+
+    res.status(200).json(items);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Lỗi server' });
+  }
+};
+
 const getSingleItem = async (req, res) => {
   const { id } = req.params;
   try {
@@ -29,7 +54,7 @@ const getSingleItem = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Item not found!' });
   }
-    
+
 };
 const getMenuIdByCategory = (category) => {
   if (category === "Entress") return 1;
@@ -40,16 +65,25 @@ const getMenuIdByCategory = (category) => {
   if (category === "Drinks") return 6;
   return null; // không hợp lệ
 };
-// Thêm sản phẩm mới
-const addItem = async (req, res) => {
+// Thêm sản phẩm mới vào bảng chờ duyệt
+const addwItem = async (req, res) => {
   try {
-    const { name, thumbnail_image, category, instructions, tags, ingredients, comments, more, createdBy } = req.body;
+    const { 
+      name, 
+      thumbnail_image, 
+      category, 
+      instructions, 
+      tags, 
+      ingredients, 
+      more,          
+      createdBy 
+    } = req.body;
 
-    // Kiểm tra dữ liệu bắt buộc
-    if (!name || !thumbnail_image || !category || !instructions || !createdBy ) {
+    // KIỂM TRA CÁC TRƯỜNG BẮT BUỘC (THÊM more)
+    if (!name || !thumbnail_image || !category || !instructions || !more || !createdBy) {
       return res.status(400).json({
         success: false,
-        message: 'Thiếu thông tin bắt buộc: name, thumbnail_image, category, instructions',
+        message: 'Thiếu thông tin bắt buộc: name, thumbnail_image, category, instructions, more',
       });
     }
     const menuId = getMenuIdByCategory(category);
@@ -59,35 +93,37 @@ const addItem = async (req, res) => {
         message: 'Danh mục không hợp lệ',
       });
     }
-    // Tạo sản phẩm mới
-    const newItem = new Item({
+
+    // TẠO SẢN PHẨM MỚI
+    const newwItem = new wItem({
       menuId,
-      name,
+      name: name.trim(),
       thumbnail_image,
       category,
-      instructions,
+      instructions: instructions.trim(),
       tags: tags || [],
-      ingredients: ingredients || [],
-      comments: comments || [],
-      more: more || [],
+      ingredients,
+      comments: [],        
+      more,                
       createdBy,
+      status: 'pending'    
     });
 
-    await newItem.save();
+    await newwItem.save();
 
     res.status(201).json({
       success: true,
-      message: 'Thêm sản phẩm thành công!',
-      item: newItem,
+      message: 'Gửi công thức thành công! Đang chờ Admin duyệt...',
+      item: newwItem,
     });
+
   } catch (error) {
-    console.error('Add item error:', error);
+    console.error('Add wItem error:', error);
     res.status(500).json({
       success: false,
-      message: 'Lỗi server khi thêm sản phẩm',
+      message: 'Lỗi server khi thêm công thức',
       error: error.message,
     });
   }
 };
-
-module.exports = { getAllItems, getSearchedItems, getSingleItem, addItem };
+module.exports = { getAllItems, getSearchedItems, getSingleItem, addwItem, getUserCreatedItems };

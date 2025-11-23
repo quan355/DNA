@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express')
 const mongoose = require('mongoose');
 const app = express();
@@ -10,12 +11,12 @@ app.use(express.json());
 app.use(cors(
   {
     origin: 'http://localhost:5173', // Chỉ cho phép frontend Vite
-    methods: ['GET', 'POST', 'OPTIONS'],
+    methods: ['GET', 'POST', 'OPTIONS','PUT','DELETE'],
     credentials: true // Cho phép gửi cookie/localStorage
   }
 ));
 async function main() {
-  await mongoose.connect('mongodb+srv://kidetmon2k3_db_user:RH00R0zWByjRsMj7@DNA-web.5bmdctu.mongodb.net/DNA-web?retryWrites=true&w=majority&appName=DNA-web');
+  await mongoose.connect(''+process.env.MONGO_URL);
 }
 // Phục vụ file tĩnh từ thư mục public
 app.use(express.static(path.join(__dirname, 'public')));
@@ -33,10 +34,18 @@ const ItemRoutes = require("./src/routes/itemRoute");
 const CategoryRoutes = require("./src/routes/categoryRoute");
 const LoginRoutes  = require("./src/routes/loginRoute");
 const RegisterRoutes = require("./src/routes/registerRoute");
+const AuthRoutes = require('./src/routes/authRoute');
+const UserRoutes = require('./src/routes/userRoute');
+const UploadRoutes = require('./src/routes/uploadRoute');
 app.use('/api', CategoryRoutes);            
 app.use('/api', ItemRoutes);
 app.use('/api', LoginRoutes);
 app.use('/api', RegisterRoutes);
+app.use('/api', AuthRoutes);
+app.use('/api/users', UserRoutes);
+app.use('/uploads', express.static('uploads'));
+app.use('/api', UploadRoutes);
+app.use('/api/admin', require('./src/routes/adminRoute'));
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

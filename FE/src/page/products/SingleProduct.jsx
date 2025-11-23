@@ -19,8 +19,8 @@ const SingleProduct = () => {
         return match ? parseInt(match[0], 10) : 0;
     };
 
-    const prepTimeMinutes = extraNumber(item?.more?.[0]?.prep_time);
-    const cookTimeMinutes = extraNumber(item?.more?.[0]?.cook_time);
+    const prepTimeMinutes = extraNumber(item?.more?.prep_time);
+    const cookTimeMinutes = extraNumber(item?.more?.cook_time);
     const totalTimeMinutes = prepTimeMinutes + cookTimeMinutes;
 
     return (
@@ -77,12 +77,12 @@ const SingleProduct = () => {
                                 </li>
                                 <li className='pl-3 mt-3'>
                                     <p>
-                                        <span>Preparation:</span> <span>{item?.more[0].prep_time}</span>
+                                        <span>Preparation:</span> <span>{item?.more.prep_time}</span>
                                     </p>
                                 </li>
                                 <li className='pl-3 mt-3'>
                                     <p>
-                                        <span>Cooking:</span> <span>{item?.more[0].cook_time}</span>
+                                        <span>Cooking:</span> <span>{item?.more.cook_time}</span>
                                     </p>
                                 </li>
                             </ul>

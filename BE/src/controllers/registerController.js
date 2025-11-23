@@ -1,9 +1,10 @@
+require('dotenv').config();
 const Account = require('../model/accountModel');
 const jwt = require('jsonwebtoken');
 
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET || 'bodoivl', {
-    expiresIn: '1d',
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
 
@@ -38,7 +39,7 @@ const register = async (req, res) => {
       email: email.toLowerCase(),
       password,
       phone,
-      profilePic: 'ava.png', // Ảnh mặc định
+      profilePic, 
     });
 
     const token = generateToken(account._id);
