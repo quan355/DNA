@@ -36,6 +36,7 @@ const SignUp = () => {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         navigate('/profile');
+        window.location.reload();
       } else {
         setError(data.message || 'Đăng ký thất bại');
       }

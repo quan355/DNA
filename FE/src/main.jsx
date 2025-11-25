@@ -22,6 +22,9 @@ import SearchByCreated from './page/SearchByCreated.jsx';
 import ForgotPassword from './page/client/ForgotPassword.jsx'
 import ResetPassword from './page/client/ResetPassword.jsx'
 import Admin from './page/admin/Admin.jsx'
+import UsersManager from './page/admin/UserManager.jsx'
+
+
 
 const router = createBrowserRouter([
   {
@@ -91,9 +94,13 @@ const router = createBrowserRouter([
         element:<CreateProduct/>,
       },
       {
-        path:"/admin",
+        path:"/adminprod",
         element:<Admin/>,
       },
+      {
+        path:"/usermanager",
+        element:<UsersManager/>,
+      }
     ]
   },
 ]);

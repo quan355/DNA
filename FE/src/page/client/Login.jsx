@@ -28,7 +28,9 @@ const Login = () => {
           localStorage.setItem('token', data.token);
           const userWithAvatar = {...data.user,profilePic: data.user.profilePic};
           localStorage.setItem('user', JSON.stringify(userWithAvatar));
+          window.dispatchEvent(new Event('userUpdated'));
           navigate('/profile');
+          window.location.reload();
       } else {
         setError(data.message || 'Đăng nhập thất bại');
       }

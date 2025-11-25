@@ -11,6 +11,10 @@ const Profile = () => {
   const saved = localStorage.getItem('user');
   return saved ? JSON.parse(saved) : {};
 });
+
+useEffect(() => {
+  setUser(JSON.parse(localStorage.getItem('user') || 'null'));
+}, [localStorage.getItem('user')]);
 useEffect(() => {
   const handleStorageChange = () => {
     const saved = localStorage.getItem('user');
@@ -122,7 +126,6 @@ const handleSave = async () => {
     const updatedUserFromServer = res.data.user;
     localStorage.setItem('user', JSON.stringify(updatedUserFromServer));
     setUser(updatedUserFromServer);
-
     alert('Cập nhật thành công!');
     setIsEditModal(false);
   } catch (err) {
@@ -141,18 +144,18 @@ const handleSave = async () => {
               <img
                 src={user.profilePic || profilePic}
                 alt="profilePic"
-                className="w-40 h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-indigo-800 shadow-2xl hover:scale-105 transition-transform"
+                className="w-40 h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-[#9c702a] shadow-2xl hover:scale-105 transition-transform"
                 onError={(e) => (e.target.src = profilePic)}
               />
               <div className="mt-8 space-y-4 w-full max-w-xs">
                 <Link to="/create">
-              <button className="w-full bg-indigo-800 text-white font-bold py-3 rounded-xl hover:bg-indigo-900 transition shadow-lg text-lg">
+              <button className="w-full bg-[#9c702a] text-white font-bold py-3 rounded-xl hover:bg-[#825102] transition shadow-lg text-lg">
                   Create Recipes
                 </button>
               </Link>
               </div>
               <div className="mt-1 space-y-4 w-full max-w-xs">
-              <button onClick={openEdit} className="w-full bg-indigo-800 text-white font-bold py-3 rounded-xl hover:bg-indigo-900 transition shadow-lg text-lg">
+              <button onClick={openEdit} className="w-full bg-[#9c702a] text-white font-bold py-3 rounded-xl hover:bg-[#825102] transition shadow-lg text-lg">
                   Edit Profile
                 </button>
               </div>
@@ -162,19 +165,19 @@ const handleSave = async () => {
             {/* Thông tin */}
             <div className="md:w-2/3 space-y-8">
               <div>
-                <h1 className="text-4xl font-bold text-indigo-800">
+                <h1 className="text-4xl font-bold text-[#9c702a]">
                   {user.fullName || user.username || 'Ẩm thực gia'}
                 </h1>
                 <p className="text-lg text-gray-600 mt-1">Thành viên DNA</p>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold text-indigo-800 mb-4">Thông tin tài khoản</h2>
-                <p><span className="font-medium">Username:</span> <span className="text-indigo-600">@{user.username}</span></p>
+                <h2 className="text-2xl font-semibold text-[#9c702a] mb-4">Thông tin tài khoản</h2>
+                <p><span className="font-medium">Username:</span> <span className="text-[#9c702a]">@{user.username}</span></p>
               </div>
 
               <div>
-                <h2 className="text-2xl font-semibold text-indigo-800 mb-4">Liên hệ</h2>
+                <h2 className="text-2xl font-semibold text-[#9c702a] mb-4">Liên hệ</h2>
                 <p className="flex items-center gap-3"><svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">/* icon email */</svg> {user.email}</p>
                 <p className="flex items-center gap-3 mt-2"><svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">/* icon phone */</svg> {user.phone || 'Chưa cập nhật'}</p>
               </div>
@@ -182,7 +185,7 @@ const handleSave = async () => {
           </div>
         </div>
        <div className="mt-20">
-  <h2 className="text-3xl font-bold text-indigo-800 mb-8">
+  <h2 className="text-3xl font-bold text-[#9c702a] mb-8">
     Công thức của tôi ({items.length})
   </h2>
 
@@ -201,7 +204,7 @@ const handleSave = async () => {
           {isEditModal && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white rounded-2xl p-8 max-w-lg w-full max-h-screen overflow-y-auto">
-      <h2 className="text-2xl font-bold text-center text-indigo-800 mb-8">Thông tin cá nhân</h2>
+      <h2 className="text-2xl font-bold text-center text-[#9c702a] mb-8">Thông tin cá nhân</h2>
 
       {/* Ảnh đại diện – ĐƯỢC SỬA */}
       <div className="flex justify-center mb-8">
@@ -209,9 +212,9 @@ const handleSave = async () => {
           <img 
             src={imagePreview || '/public/ava.png'} 
             alt="profilePic" 
-            className="w-32 h-32 rounded-full object-cover border-4 border-indigo-600 shadow-lg"
+            className="w-32 h-32 rounded-full object-cover border-4 border-[#9c702a] shadow-lg"
           />
-          <label className="absolute bottom-0 right-0 bg-indigo-600 p-3 rounded-full cursor-pointer hover:bg-indigo-700 transition">
+          <label className="absolute bottom-0 right-0 bg-[#9c702a] p-3 rounded-full cursor-pointer hover:bg-[#825102] transition">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -264,7 +267,7 @@ const handleSave = async () => {
             value={editData.phone || ''}
             onChange={e => setEditData({...editData, phone: e.target.value})}
             placeholder="Nhập số điện thoại mới"
-            className="w-full px-4 py-3 border-2 rounded-xl focus:border-indigo-600 outline-none transition"
+            className="w-full px-4 py-3 border-2 rounded-xl focus:border-[#9c702a] outline-none transition"
           />
         </div>
 
@@ -275,7 +278,7 @@ const handleSave = async () => {
             type="text" 
             value={editData.country || ''} 
             onChange={e => setEditData({...editData, country: e.target.value})}
-            className="w-full px-4 py-3 border-2 rounded-xl focus:border-indigo-600 outline-none transition"
+            className="w-full px-4 py-3 border-2 rounded-xl focus:border-[#9c702a] outline-none transition"
           />
         </div>
 
@@ -287,7 +290,7 @@ const handleSave = async () => {
             value={editData.city || ''}
             onChange={e => setEditData({...editData, city: e.target.value})}
             placeholder="Ví dụ: TP. Hồ Chí Minh"
-            className="w-full px-4 py-3 border-2 rounded-xl focus:border-indigo-600 outline-none transition"
+            className="w-full px-4 py-3 border-2 rounded-xl focus:border-[#9c702a] outline-none transition"
           />
         </div>
 
@@ -299,7 +302,7 @@ const handleSave = async () => {
             value={editData.district || ''}
             onChange={e => setEditData({...editData, district: e.target.value})}
             placeholder="Ví dụ: Quận 1"
-            className="w-full px-4 py-3 border-2 rounded-xl focus:border-indigo-600 outline-none transition"
+            className="w-full px-4 py-3 border-2 rounded-xl focus:border-[#9c702a] outline-none transition"
           />
         </div>
 
@@ -311,7 +314,7 @@ const handleSave = async () => {
         <button
           onClick={handleSave}
           disabled={loading}
-          className="flex-1 bg-indigo-600 text-white py-3 rounded-xl font-bold hover:bg-indigo-700 disabled:opacity-70 transition shadow-lg"
+          className="flex-1 bg-[#9c702a] text-white py-3 rounded-xl font-bold hover:bg-[#825102] disabled:opacity-70 transition shadow-lg"
         >
           {loading ? 'Đang lưu...' : 'Lưu thay đổi'}
         </button>

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const app = express();
 const cors = require('cors');
 const path = require('path');
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 //kidetmon2k3_db_user
 //TbvsjFQskCMiipmp
 app.use(express.json());
@@ -37,6 +37,9 @@ const RegisterRoutes = require("./src/routes/registerRoute");
 const AuthRoutes = require('./src/routes/authRoute');
 const UserRoutes = require('./src/routes/userRoute');
 const UploadRoutes = require('./src/routes/uploadRoute');
+const CommentRoutes = require('./src/routes/commentRoute');
+const AdminRoutes = require('./src/routes/adminRoute');
+const ContactRoutes = require('./src/routes/contactRoute');
 app.use('/api', CategoryRoutes);            
 app.use('/api', ItemRoutes);
 app.use('/api', LoginRoutes);
@@ -45,7 +48,9 @@ app.use('/api', AuthRoutes);
 app.use('/api/users', UserRoutes);
 app.use('/uploads', express.static('uploads'));
 app.use('/api', UploadRoutes);
-app.use('/api/admin', require('./src/routes/adminRoute'));
+app.use('/api/admin',AdminRoutes );
+app.use('/api',ContactRoutes);
+app.use('/api/comments', CommentRoutes);
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

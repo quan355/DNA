@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import Header from './components/header/Header';
-import Footer from './components/header/Footer';
-
+import Footer from './components/header/Footer'; 
 function App() {
   return (
     <div className="max-w-screen-2xl mx-auto">

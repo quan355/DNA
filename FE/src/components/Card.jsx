@@ -49,14 +49,14 @@ const Card = ({item}) => {
 
           <div className='flex items-center'>
             <GoClock className='mr-1' />
-            <span>{item?.more?.[0]?.prep_time}</span>
+            <span>{item?.more?.prep_time}</span>
           </div>
         </div>
       </div>
 
       
       <div className='absolute top-2 right-2 py-2 px-4 bg-white rounded-lg shadow'>
-        <span className='font-medium text-sm'>{item?.more?.[0]?.difficulty}</span>
+        <span className='font-medium text-sm'>{item?.more?.difficulty}</span>
       </div>
     </div>
   </div>

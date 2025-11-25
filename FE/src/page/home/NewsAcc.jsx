@@ -10,9 +10,9 @@ const NewsLeller = () => {
          tip and tricks and product 
          recommendations with everyone !</p>
          <div className='mt-6 flex flex-col items-center md:px-8  mb-20'>
-            <button className='py-4 px-8 bg-btncolor text-white hover:text-white 
-                w-full transition ease-in duration-200 text-center text-base font-semibold border border-[#9c702a]
-                focus:outline-none rounded-lg'>
+            <button className='py-4 px-8 hover:bg-btncolor text-secondary hover:text-white 
+                         transition ease-in duration-200 text-center text-base font-semibold border border-[#9c702a]
+                        focus:outline-none rounded-lg'>
                 Sign Up
             </button>
          </div>

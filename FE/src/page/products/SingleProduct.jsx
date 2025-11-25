@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLoaderData } from 'react-router-dom';
+import CommentSection from '../../components/Comment.jsx';
 
 const SingleProduct = () => {
     const item = useLoaderData();
@@ -112,6 +113,7 @@ const SingleProduct = () => {
                             </ul>
                         </div>
                     )}
+                    <CommentSection productId={item._id} />
                 </div>
             </article>
         </section>

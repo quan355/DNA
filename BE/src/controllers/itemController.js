@@ -2,8 +2,39 @@ const Item = require("../model/ItemModel");
 const wItem = require("../model/waitItemsModel");
 // GET: Lấy tất cả món ăn
 const getAllItems = async (req, res) => {
-  const items = await Item.find().sort({ createdAt: -1 });
-  res.status(200).json(items);
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 9;   
+    const skip = (page - 1) * limit;
+    const total = await Item.countDocuments(); 
+
+    const items = await Item.find({})           
+      .sort({ createdAt: -1 })              
+      .skip(skip)
+      .limit(limit)
+      .lean();
+
+    const totalPages = Math.ceil(total / limit);
+
+    res.json({
+      success: true,
+      items,
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalItems: total,
+        hasNext: page < totalPages,
+        hasPrev: page > 1
+      }
+    });
+
+  } catch (error) {
+    console.error('Lỗi getAllItems:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Lỗi server khi lấy danh sách món ăn' 
+    });
+  }
 };
 
 // GET: Tìm kiếm món ăn theo tên

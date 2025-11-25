@@ -77,13 +77,13 @@ const DesktopNav = ({ menuItems, Logo }) => {
                 <>
                   <div className="border-t border-gray-200 ">
                     <Link
-                      to="/admin"
+                      to="/adminprod"
                       className="flex items-center gap-3 px-6 py-4 text-gray-700 hover:bg-indigo-50 transition border-b"
                     >
                       Duyệt công thức chờ
                     </Link>
                     <Link
-                      to="/admin/users"
+                      to="/usermanager"
                       className="flex items-center gap-3 px-6 py-4 text-gray-700 hover:bg-indigo-50 transition border-b"
                     >
                       Quản lý người dùng

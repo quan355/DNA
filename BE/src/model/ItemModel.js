@@ -18,6 +18,10 @@ const commentSchema = new mongoose.Schema({
     comment: {
         type: String,
         required: true,
+    },
+    date: {
+        type: Date,
+        default: Date.now,
     },  
 });
 const moreSchema = new mongoose.Schema({

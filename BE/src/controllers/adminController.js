@@ -1,5 +1,7 @@
 const Item = require("../model/ItemModel");
 const wItem = require("../model/waitItemsModel");
+const Contact = require('../model/contactModel');
+const User = require('../model/accountModel');
 
 // LẤY DANH SÁCH CÔNG THỨC ĐANG CHỜ DUYỆT
 const getPendingRecipes = async (req, res) => {
@@ -89,10 +91,57 @@ const rejectRecipe = async (req, res) => {
     res.status(500).json({ success: false, message: 'Lỗi server' });
   }
 };
+// Lấy danh sách tất cả người dùng
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+      .select('-password')
+      .sort({ createdAt: -1 });
 
+    res.json({
+      success: true,
+      users
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
+
+// Xóa người dùng
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy user' });
+
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Xóa thành công' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
+
+//  Lấy tất cả tin nhắn liên hệ
+const getAllContacts = async (req, res) => {
+  try {
+    const contacts = await Contact.find()
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      contacts
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
 module.exports = {
   getPendingRecipes,
   getPendingRecipeDetail,
   approveRecipe,
-  rejectRecipe
+  rejectRecipe,
+  getAllUsers,
+  deleteUser,
+  getAllContacts
 };
