@@ -11,8 +11,7 @@ const Footer = () => {
         </div>
 
         <p class="mt-4 max-w-xs text-gray-500">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse non cupiditate quae nam
-          molestias.
+          
         </p>
 
         <ul class="mt-8 flex gap-6">
@@ -68,99 +67,7 @@ const Footer = () => {
         </ul>
       </div>
 
-      <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-2 lg:grid-cols-4">
-        <div>
-          <p class="font-medium text-gray-900">Services</p>
-
-          <ul class="mt-6 space-y-4 text-sm">
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> 1on1 Coaching </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Company Review </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75">
-                Accounts Review
-              </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> HR Consulting </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75">
-                SEO Optimisation
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <p class="font-medium text-gray-900">Company</p>
-
-          <ul class="mt-6 space-y-4 text-sm">
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> About </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Meet the Team </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75">
-                Accounts Review
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <p class="font-medium text-gray-900">Helpful Links</p>
-
-          <ul class="mt-6 space-y-4 text-sm">
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Contact </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> FAQs </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Live Chat </a>
-            </li>
-          </ul>
-        </div>
-
-        <div>
-          <p class="font-medium text-gray-900">Legal</p>
-
-          <ul class="mt-6 space-y-4 text-sm">
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Accessibility </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Returns Policy </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75"> Refund Policy </a>
-            </li>
-
-            <li>
-              <a href="#" class="text-gray-700 transition hover:opacity-75">
-                Hiring-3 Statistics
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
+      
     </div>
 
     <p class="text-xs text-gray-500 text-center">© 2025. Company Name. All rights reserved.</p>

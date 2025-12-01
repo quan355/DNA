@@ -1,194 +1,217 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FiSearch, FiEdit3, FiTrash2, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
-const Admin = () => {
-  const [recipes, setRecipes] = useState([]);
+const AdminDashboard = () => {
+  const [activeTab, setActiveTab] = useState('pending'); // pending | approved | users | contact
+  const [pending, setPending] = useState([]);
+  const [approved, setApproved] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [detailRecipe, setDetailRecipe] = useState(null);
-  const [showDetail, setShowDetail] = useState(false);
+
+  // Phân trang
+  const [currentPagePending, setCurrentPagePending] = useState(1);
+  const [currentPageApproved, setCurrentPageApproved] = useState(1);
+  const ITEMS_PER_PAGE = 9;
 
   const token = localStorage.getItem('token');
 
-  // Lấy danh sách chờ duyệt
-  const fetchPending = async () => {
+  // Fetch tất cả dữ liệu
+  const fetchData = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/pending', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setRecipes(res.data.data || []);
+      const [pRes, aRes, uRes, cRes] = await Promise.all([
+        axios.get('http://localhost:5000/api/admin/pending', { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get('http://localhost:5000/api/admin/items', { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get('http://localhost:5000/api/admin/users/all', { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get('http://localhost:5000/api/admin/contact', { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+
+      setPending(pRes.data.data || []);
+      setApproved(aRes.data.data || []);
+      setUsers(uRes.data.users || []);
+      setContacts(cRes.data.contacts || []);
     } catch (err) {
-      alert(err.response?.data?.message || 'Lỗi tải danh sách chờ duyệt');
+      alert('Lỗi tải dữ liệu admin');
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPending();
+    fetchData();
   }, []);
 
-  // Xem chi tiết
-  const viewDetail = async (id) => {
-    try {
-      const res = await axios.get(`http://localhost:5000/api/admin/pending/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setDetailRecipe(res.data.data);
-      setShowDetail(true);
-    } catch (err) {
-      alert('Không thể xem chi tiết công thức');
-    }
+  // === PHÂN TRANG ===
+  const paginate = (array, page) => {
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    return array.slice(start, start + ITEMS_PER_PAGE);
   };
 
-  // Duyệt công thức
+  const totalPages = (array) => Math.ceil(array.length / ITEMS_PER_PAGE);
+
+  // === XỬ LÝ DUYỆT / TỪ CHỐI / XÓA ===
   const approve = async (id) => {
-    if (!window.confirm('Bạn có chắc muốn DUYỆT công thức này?')) return;
-
+    if (!window.confirm('DUYỆT công thức này?')) return;
     try {
-      await axios.put(`http://localhost:5000/api/admin/approve/${id}`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert('Đã duyệt thành công! Công thức đã được đăng.');
-      setRecipes(prev => prev.filter(r => r._id !== id));
-      setShowDetail(false);
-    } catch (err) {
-      alert(err.response?.data?.message || 'Lỗi khi duyệt công thức');
-    }
+      await axios.put(`http://localhost:5000/api/admin/approve/${id}`, {}, { headers: { Authorization: `Bearer ${token}` } });
+      alert('Đã duyệt thành công!');
+      fetchData();
+    } catch (err) { alert('Lỗi duyệt'); }
   };
 
-  // Từ chối công thức
   const reject = async (id) => {
-    if (!window.confirm('Bạn có chắc muốn TỪ CHỐI và XÓA công thức này?')) return;
-
+    if (!window.confirm('TỪ CHỐI và XÓA công thức này?')) return;
     try {
-      await axios.delete(`http://localhost:5000/api/admin/reject/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert('Đã từ chối và xóa công thức khỏi danh sách chờ.');
-      setRecipes(prev => prev.filter(r => r._id !== id));
-      setShowDetail(false);
-    } catch (err) {
-      alert(err.response?.data?.message || 'Lỗi khi từ chối công thức');
-    }
+      await axios.delete(`http://localhost:5000/api/admin/reject/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      alert('Đã từ chối!');
+      fetchData();
+    } catch (err) { alert('Lỗi từ chối'); }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl text-gray-600">Đang tải danh sách...</div>
-      </div>
-    );
-  }
+  const deleteApproved = async (id) => {
+    if (!window.confirm('XÓA vĩnh viễn công thức này?')) return;
+    try {
+      await axios.delete(`http://localhost:5000/api/admin/items/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      alert('Đã xóa!');
+      fetchData();
+    } catch (err) { alert('Lỗi xóa'); }
+  };
+
+  if (loading) return <div className="text-center py-20 text-xl">Đang tải dữ liệu admin...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow p-6 mb-8 text-center">
-          <h1 className="text-3xl font-bold text-indigo-700">Quản lý công thức chờ duyệt</h1>
-          <p className="text-gray-600 mt-2">Tổng cộng: <strong>{recipes.length}</strong> công thức đang chờ</p>
+        {/* Tabs giống ảnh của bạn */}
+        <div className="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+          <div className="flex flex-wrap border-b">
+            <button
+              onClick={() => { setActiveTab('pending'); setCurrentPagePending(1); }}
+              className={`px-8 py-4 font-semibold transition ${activeTab === 'pending' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600 hover:text-indigo-600'}`}
+            >
+              Công thức chờ duyệt ({pending.length})
+            </button>
+            <button
+              onClick={() => { setActiveTab('approved'); setCurrentPageApproved(1); }}
+              className={`px-8 py-4 font-semibold transition ${activeTab === 'approved' ? 'text-indigo-600 border-b-2 border-indigo-600' : 'text-gray-600 hover:text-indigo-600'}`}
+            >
+              Công thức đã duyệt ({approved.length})
+            </button>
+          </div>
         </div>
 
-        {recipes.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-16 text-center">
-            <p className="text-2xl text-gray-500">Không có công thức nào đang chờ duyệt</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recipes.map((recipe) => (
-              <div key={recipe._id} onClick={() => viewDetail(recipe._id)} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition">
-                <img
-                  src={recipe.thumbnail_image}
-                  alt={recipe.name}
-                  className="w-full h-56 object-cover"
-                />
-                <div className="p-5">
-                  <h3 className="font-bold text-xl text-gray-800 mb-2 line-clamp-2">{recipe.name}</h3>
-                  <p className="text-sm text-gray-600 mb-1">Danh mục: <strong>{recipe.category}</strong></p>
-                  <div className="mt-4 flex gap-2">
+        {/* NỘI DUNG THEO TAB */}
+        {activeTab === 'pending' && (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Công thức chờ duyệt</h2>
+            {pending.length === 0 ? (
+              <p className="text-center py-20 text-gray-500 text-xl">Không có công thức nào chờ duyệt</p>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {paginate(pending, currentPagePending).map((item) => (
+                    <div key={item._id} className="bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden">
+                      <img src={item.thumbnail_image} alt={item.name} className="w-full h-48 object-cover" />
+                      <div className="p-5">
+                        <h3 className="font-bold text-lg mb-2 line-clamp-2">{item.name}</h3>
+                        <p className="text-sm text-gray-600">Danh mục: {item.category}</p>
+                        <div className="mt-4 flex gap-3">
+                          <button onClick={() => approve(item._id)} className="flex-1 bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700 font-medium">
+                            Duyệt
+                          </button>
+                          <button onClick={() => reject(item._id)} className="flex-1 bg-red-600 text-white py-2.5 rounded-lg hover:bg-red-700 font-medium">
+                            Từ chối
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Phân trang */}
+                {totalPages(pending) > 1 && (
+                  <div className="flex justify-center gap-3 mt-10">
                     <button
-                      onClick={() => viewDetail(recipe._id)}
-                      className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+                      onClick={() => setCurrentPagePending(p => Math.max(1, p - 1))}
+                      disabled={currentPagePending === 1}
+                      className="p-3 rounded-lg bg-white shadow hover:bg-gray-100 disabled:opacity-50"
                     >
-                      Xem chi tiết
+                      <FiChevronLeft />
+                    </button>
+                    <span className="py-3 px-5 bg-indigo-600 text-white rounded-lg font-medium">
+                      Trang {currentPagePending} / {totalPages(pending)}
+                    </span>
+                    <button
+                      onClick={() => setCurrentPagePending(p => Math.min(totalPages(pending), p + 1))}
+                      disabled={currentPagePending === totalPages(pending)}
+                      className="p-3 rounded-lg bg-white shadow hover:bg-gray-100 disabled:opacity-50"
+                    >
+                      <FiChevronRight />
                     </button>
                   </div>
-                </div>
-              </div>
-            ))}
+                )}
+              </>
+            )}
           </div>
         )}
-      </div>
 
-      {/* Modal chi tiết */}
-      {showDetail && detailRecipe && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-4xl w-full max-h-screen overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">{detailRecipe.name}</h2>
-                <button
-                  onClick={() => setShowDetail(false)}
-                  className="text-3xl text-gray-500 hover:text-gray-800"
-                >
-                  ×
-                </button>
-              </div>
+        {activeTab === 'approved' && (
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Công thức đã duyệt</h2>
+            {approved.length === 0 ? (
+              <p className="text-center py-20 text-gray-500 text-xl">Chưa có công thức nào được duyệt</p>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {paginate(approved, currentPageApproved).map((item) => (
+                    <div key={item._id} className="bg-white rounded-xl shadow hover:shadow-xl transition overflow-hidden">
+                      <img src={item.thumbnail_image} alt={item.name} className="w-full h-48 object-cover" />
+                      <div className="p-5">
+                        <h3 className="font-bold text-lg mb-2 line-clamp-2">{item.name}</h3>
+                        <p className="text-sm text-gray-600">Danh mục: {item.category}</p>
+                        <div className="mt-4 flex gap-3">
+                          
+                          <button onClick={() => deleteApproved(item._id)} className="flex-1 bg-red-600 text-white py-2.5 rounded-lg hover:bg-red-700 flex items-center justify-center gap-2 font-medium">
+                            <FiTrash2 /> Xóa
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-              <img
-                src={detailRecipe.thumbnail_image}
-                alt={detailRecipe.name}
-                className="w-full h-96 object-cover rounded-lg mb-6"
-              />
-
-              <div className="grid md:grid-cols-2 gap-8 mb-8">
-                <div>
-                  <h3 className="font-bold text-lg mb-3 text-indigo-700">Thông tin chi tiết</h3>
-                  <div className="space-y-2">
-                    <p><strong>Chuẩn bị:</strong> {detailRecipe.more.prep_time}</p>
-                    <p><strong>Nấu:</strong> {detailRecipe.more.cook_time}</p>
-                    <p><strong>Phần ăn:</strong> {detailRecipe.more.serving_time}</p>
-                    <p><strong>Độ khó:</strong> {detailRecipe.more.difficulty}</p>
-                    {detailRecipe.more.source && <p><strong>Nguồn:</strong> {detailRecipe.more.source}</p>}
+                {/* Phân trang */}
+                {totalPages(approved) > 1 && (
+                  <div className="flex justify-center gap-3 mt-10">
+                    <button
+                      onClick={() => setCurrentPageApproved(p => Math.max(1, p - 1))}
+                      disabled={currentPageApproved === 1}
+                      className="p-3 rounded-lg bg-white shadow hover:bg-gray-100 disabled:opacity-50"
+                    >
+                      <FiChevronLeft />
+                    </button>
+                    <span className="py-3 px-5 bg-indigo-600 text-white rounded-lg font-medium">
+                      Trang {currentPageApproved} / {totalPages(approved)}
+                    </span>
+                    <button
+                      onClick={() => setCurrentPageApproved(p => Math.min(totalPages(approved), p + 1))}
+                      disabled={currentPageApproved === totalPages(approved)}
+                      className="p-3 rounded-lg bg-white shadow hover:bg-gray-100 disabled:opacity-50"
+                    >
+                      <FiChevronRight />
+                    </button>
                   </div>
-                </div>
-
-                <div>
-                  <h3 className="font-bold text-lg mb-3 text-indigo-700">Nguyên liệu</h3>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {detailRecipe.ingredients.map((ing, i) => (
-                      <li key={i}>{ing.name} — {ing.quantity}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              <div className="mb-8">
-                <h3 className="font-bold text-lg mb-3 text-indigo-700">Hướng dẫn nấu</h3>
-                <p className="whitespace-pre-line text-gray-700 leading-relaxed">
-                  {detailRecipe.instructions}
-                </p>
-              </div>
-
-              <div className="flex gap-4">
-                <button
-                  onClick={() => approve(detailRecipe._id)}
-                  className="flex-1 bg-green-600 text-white py-4 rounded-lg text-lg font-bold hover:bg-green-700 transition"
-                >
-                  DUYỆT CÔNG THỨC NÀY
-                </button>
-                <button
-                  onClick={() => reject(detailRecipe._id)}
-                  className="flex-1 bg-red-600 text-white py-4 rounded-lg text-lg font-bold hover:bg-red-700 transition"
-                >
-                  TỪ CHỐI & XÓA
-                </button>
-              </div>
-            </div>
+                )}
+              </>
+            )}
           </div>
-        </div>
-      )}
+        )}
+
+        {/* Bạn có thể thêm nội dung cho tab Users và Contact sau */}
+      </div>
     </div>
   );
 };
 
-export default Admin;
+export default AdminDashboard;

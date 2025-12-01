@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import {  useNavigate, Link } from 'react-router-dom';
 import profilePic from '../../assets/ava.png';
 import axios from 'axios';
-import Card from '../../components/Card';
+import SmartItemList from '../../components/SmartListProduct.jsx';
+
 const token = localStorage.getItem('token');
 
 
@@ -185,19 +186,7 @@ const handleSave = async () => {
           </div>
         </div>
        <div className="mt-20">
-  <h2 className="text-3xl font-bold text-[#9c702a] mb-8">
-    Công thức của tôi ({items.length})
-  </h2>
-
-            {loading ? (
-            <p>Đang tải công thức...</p>
-          ) : items.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-              {items.map(item => <Card key={item._id} item={item} />)}
-            </div>
-          ) : (
-            <p>Bạn chưa tạo công thức nào</p>
-          )}
+  <SmartItemList userId={user._id} />
           </div>
       </div>
           {/* ================== MODAL CHỈNH SỬA ================== */}

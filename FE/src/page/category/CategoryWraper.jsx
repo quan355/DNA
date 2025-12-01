@@ -19,19 +19,19 @@ function CategoryItem({name, href, backgroundColor, color}){
 function CategoryList(){
     return (
         <div className='flex flex-wrap items-center justify-center gap-8'>
-            <CategoryItem name="entress" href="/categories/entress" backgroundColor="#f0f5c4"
+            <CategoryItem name="Khai Vị" href="/categories/entress" backgroundColor="#f0f5c4"
             color="#59871f"/>
-            <CategoryItem name="breakfast" href="/categories/breakfast" backgroundColor="#efedfa"
+            <CategoryItem name="Bữa Sáng" href="/categories/breakfast" backgroundColor="#efedfa"
             color="#3c3a8f"/>
-            <CategoryItem name="lunch" href="/categories/lunch" backgroundColor="#e5f7f3"
+            <CategoryItem name="Bữa Trưa" href="/categories/lunch" backgroundColor="#e5f7f3"
             color="#1f8787"/>
-            <CategoryItem name="desserts" href="/categories/dessert" backgroundColor="#e8f5fa"
+            <CategoryItem name="Tráng Miệng" href="/categories/dessert" backgroundColor="#e8f5fa"
             color="#397a9e"/>
-            <CategoryItem name="sides" href="/categories/sides" backgroundColor="#feefc9"
+            <CategoryItem name="Đồ Ăn Kèm" href="/categories/sides" backgroundColor="#feefc9"
             color="#d16400"/>
-            <CategoryItem name="drinks" href="/categories/drinks" backgroundColor="#ffeae3"
+            <CategoryItem name="Thức Uống" href="/categories/drinks" backgroundColor="#ffeae3"
             color="#f0493e"/>
-            <CategoryItem name="all" href="/recipes" backgroundColor="#e6a112"
+            <CategoryItem name="Tất Cả" href="/recipes" backgroundColor="#e6a112"
             color="#f1f0e6"/>
         </div>
     )

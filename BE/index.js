@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors(
   {
     origin: 'http://localhost:5173', // Chỉ cho phép frontend Vite
-    methods: ['GET', 'POST', 'OPTIONS','PUT','DELETE'],
+    methods: ['GET', 'POST', 'OPTIONS','PUT','DELETE','PATCH'],
     credentials: true // Cho phép gửi cookie/localStorage
   }
 ));
@@ -30,6 +30,8 @@ app.get('/', (req, res) => {
 })
 main().then(()=>console.log("Mongodb Connected Succesfully")).catch(err => console.log(err));
 //routes
+const CommentRoutes = require('./src/routes/commentRoute');
+app.use('/api/comments', CommentRoutes);
 const ItemRoutes = require("./src/routes/itemRoute");
 const CategoryRoutes = require("./src/routes/categoryRoute");
 const LoginRoutes  = require("./src/routes/loginRoute");
@@ -37,20 +39,22 @@ const RegisterRoutes = require("./src/routes/registerRoute");
 const AuthRoutes = require('./src/routes/authRoute');
 const UserRoutes = require('./src/routes/userRoute');
 const UploadRoutes = require('./src/routes/uploadRoute');
-const CommentRoutes = require('./src/routes/commentRoute');
+
 const AdminRoutes = require('./src/routes/adminRoute');
 const ContactRoutes = require('./src/routes/contactRoute');
+
+app.use('/uploads', express.static('uploads'));
+app.use('/api/users', UserRoutes);
+app.use('/api/admin',AdminRoutes );
+app.use('/api', UploadRoutes);
 app.use('/api', CategoryRoutes);            
 app.use('/api', ItemRoutes);
 app.use('/api', LoginRoutes);
 app.use('/api', RegisterRoutes);
 app.use('/api', AuthRoutes);
-app.use('/api/users', UserRoutes);
-app.use('/uploads', express.static('uploads'));
-app.use('/api', UploadRoutes);
-app.use('/api/admin',AdminRoutes );
+
 app.use('/api',ContactRoutes);
-app.use('/api/comments', CommentRoutes);
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })

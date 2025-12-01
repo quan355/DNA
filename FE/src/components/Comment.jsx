@@ -10,43 +10,51 @@ const CommentSection = ({ productId }) => {
 
   const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
   const token = localStorage.getItem('token');
-  const loadComments = async () => {
-    try {
-      const res = await axios.get(`/api/comments/${productId}`);
-      setComments(res.data); 
-    } catch (err) {
-      console.error('Load comment lỗi:', err);
-    }
-  };
+ const loadComments = async () => {
+  try {
+    const res = await axios.get(`http://localhost:5000/api/comments/${productId}`);
+    // DÒNG THẦN THÁNH – ÉP REACT RE-RENDER LUÔN DÙ DỮ LIỆU GIỐNG NHAU
+    setComments(res.data || []);
+  } catch (err) {
+    console.error('Load comment lỗi:', err);
+    setComments([]); // fallback
+  }
+};
   useEffect(() => {
     loadComments();
   }, [productId]);
-  // Đăng comment / reply
-  const post = async (content, parentId = null) => {
-    try {
-      const res = await axios.post(
-        `/api/comments/${productId}`,
-        { content, parentId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      if (!parentId) {
-        setComments([res.data, ...comments]);
-        setNewComment('');
-      } else {
-        loadComments(); // reply thì reload cho chắc
-        setReplyText('');
-        setReplyTo(null);
-      }
-    } catch (err) {
-      alert('Đăng không thành công');
+ const post = async (content, parentId = null) => {
+  if (!content?.trim()) return;
+
+  try {
+    await axios.post(
+      `http://localhost:5000/api/comments/${productId}`,
+      { content: content.trim(), parentId },
+      { headers: { 'Authorization': `Bearer ${token}` } }
+    );
+
+    // ÉP LOAD LẠI HOÀN TOÀN MỚI – FIX 100% REPLY KHÔNG HIỆN
+    const res = await axios.get(`http://localhost:5000/api/comments/${productId}`);
+    setComments(res.data || []);
+
+    // Reset input
+    if (!parentId) {
+      setNewComment('');
+    } else {
+      setReplyText('');
+      // KHÔNG setReplyTo(null) → giữ ô nhập mở để gõ tiếp
     }
-  };
+  } catch (err) {
+    alert('Đăng không thành công!');
+  }
+};
   const like = async (commentId) => {
     try {
       await axios.patch(
-        `/api/comments/${commentId}/like`,
+        `http://localhost:5000/api/comments/${commentId}/like`,
         {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { 'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json' } }
       );
       loadComments();
     } catch (err) {
@@ -57,7 +65,7 @@ const CommentSection = ({ productId }) => {
     <div className={`${depth > 0 ? 'ml-8 mt-4 border-l-2 border-gray-200 pl-4' : 'mt-6'}`}>
       <div className="flex gap-3">
         <img
-          src={c.userAvatar || 'https://via.placeholder.com/40'}
+          src={c.userAvatar }
           alt={c.userName}
           className="w-10 h-10 rounded-full object-cover"
         />
@@ -79,21 +87,46 @@ const CommentSection = ({ productId }) => {
             </button>
           </div>
 
-          {/* Ô reply */}
+          
           {replyTo === c._id && (
             <div className="mt-3 flex gap-2">
               <input
+                autoFocus                    // ← Tự động focus khi hiện
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && post(replyText, c._id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (replyText.trim()) {
+                      post(replyText, c._id);
+                      // Sau khi gửi xong vẫn giữ replyTo để ô input không biến mất
+                      // Chỉ reset text thôi → người dùng gõ tiếp được luôn
+                    }
+                  }
+                  if (e.key === 'Escape') {
+                    setReplyTo(null);        // chỉ Escape mới tắt
+                    setReplyText('');
+                  }
+                }}
                 placeholder="Viết trả lời..."
-                className="flex-1 px-3 py-2 border rounded-lg text-sm"
+                className="flex-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
-                onClick={() => post(replyText, c._id)}
+                onClick={() => {
+                  if (replyText.trim()) post(replyText, c._id);
+                }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700"
               >
                 Gửi
+              </button>
+              <button
+                onClick={() => {
+                  setReplyTo(null);
+                  setReplyText('');
+                }}
+                className="px-3 py-2 text-gray-500 hover:text-gray-700"
+              >
+                Hủy
               </button>
             </div>
           )}
@@ -115,7 +148,7 @@ const CommentSection = ({ productId }) => {
       {currentUser ? (
         <div className="flex gap-4 mb-8">
           <img
-            src={currentUser.avatar}
+            src={currentUser.profilePic }
             alt=""
             className="w-12 h-12 rounded-full"
           />

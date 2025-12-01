@@ -45,7 +45,7 @@ const Contact = () => {
 
           {/* Thông tin liên hệ */}
           <div className="md:py-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">Get in touch</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-6">Hãy Liên Hệ Ngay</h2>
             <p className="mt-4 text-lg text-gray-700 leading-relaxed">
               Bạn cần hỗ trợ? Có góp ý cho website? Hãy gửi tin nhắn cho chúng tôi, đội ngũ sẽ phản hồi trong vòng 24h!
             </p>
@@ -55,20 +55,20 @@ const Contact = () => {
                 <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                <span className="font-medium text-gray-800">+84 123 456 789</span>
+                <span className="font-medium text-gray-800">+84 337335957</span>
               </div>
               <div className="flex gap-4">
                 <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span className="font-medium text-gray-800">support@nauan.com</span>
+                <span className="font-medium text-gray-800">daynauan@gmail.com</span>
               </div>
               <div className="flex gap-4">
                 <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-                <span className="font-medium text-gray-800">TP.HCM, Việt Nam</span>
+                <span className="font-medium text-gray-800">Hà Nội, Việt Nam</span>
               </div>
             </dl>
           </div>
@@ -87,7 +87,7 @@ const Contact = () => {
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full px-5 py-4 rounded-xl border-2 border-gray-300 focus:border-indigo-600 focus:outline-none transition text-gray-800"
-                placeholder="Nguyễn Văn A"
+                placeholder=""
               />
             </div>
 
@@ -100,7 +100,7 @@ const Contact = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className="w-full px-5 py-4 rounded-xl border-2 border-gray-300 focus:border-indigo-600 focus:outline-none transition text-gray-800"
-                placeholder="you@example.com"
+                placeholder=""
               />
             </div>
 

@@ -10,20 +10,7 @@ const ingredientSchema = new mongoose.Schema({
         required: true,
     },
 });
-const commentSchema = new mongoose.Schema({
-    userId: {
-        type: String,
-        required: true,
-    },
-    comment: {
-        type: String,
-        required: true,
-    },
-    date: {
-        type: Date,
-        default: Date.now,
-    },  
-});
+
 const moreSchema = new mongoose.Schema({
     prep_time: {type: String, required: true},
     cook_time: {type: String, required: true},
@@ -37,7 +24,7 @@ const ItemSchema = new mongoose.Schema({
         required: true,
         min: 1,
         max: 6,
-        unique: true,
+       
     },
     name: {
         type: String,
@@ -52,7 +39,7 @@ const ItemSchema = new mongoose.Schema({
         required: true,
     },
     instructions: {
-        type: String,
+        type: [String],
         required: true,
     },
     createdBy: { type: String, required: true },
@@ -60,9 +47,6 @@ const ItemSchema = new mongoose.Schema({
     ingredients:{
         type: [ingredientSchema],
         required: true,
-    },
-    comments: {
-        type: [commentSchema],
     },
     more: { type: moreSchema, required: true },
 });

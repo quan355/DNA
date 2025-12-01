@@ -136,6 +136,68 @@ const getAllContacts = async (req, res) => {
     res.status(500).json({ success: false, message: 'Lỗi server' });
   }
 };
+const getApprovedRecipes = async (req, res) => {
+  try {
+    const recipes = await Item.find()
+      .populate('createdBy', 'fullName email profilePic')
+      .sort({ approvedAt: -1 });
+
+    res.json({
+      success: true,
+      count: recipes.length,
+      data: recipes
+    });
+  } catch (err) {
+    console.error('Lỗi lấy danh sách công thức đã duyệt:', err);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
+
+// XÓA CÔNG THỨC ĐÃ DUYỆT
+const deleteApprovedRecipe = async (req, res) => {
+  try {
+    const recipe = await Item.findById(req.params.id);
+    if (!recipe) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy công thức' });
+    }
+
+    await Item.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'Đã xóa công thức vĩnh viễn' });
+  } catch (err) {
+    console.error('Lỗi xóa công thức:', err);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
+
+// CẬP NHẬT (SỬA) CÔNG THỨC ĐÃ DUYỆT
+const updateApprovedRecipe = async (req, res) => {
+  try {
+    const { name, category, instructions, ingredients, more } = req.body;
+
+    const recipe = await Item.findById(req.params.id);
+    if (!recipe) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy công thức' });
+    }
+
+    // Cập nhật các field
+    if (name) recipe.name = name;
+    if (category) recipe.category = category;
+    if (instructions) recipe.instructions = instructions;
+    if (ingredients) recipe.ingredients = ingredients;
+    if (more) recipe.more = more;
+
+    await recipe.save();
+
+    res.json({
+      success: true,
+      message: 'Cập nhật công thức thành công',
+      data: recipe
+    });
+  } catch (err) {
+    console.error('Lỗi sửa công thức:', err);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
 module.exports = {
   getPendingRecipes,
   getPendingRecipeDetail,
@@ -143,5 +205,8 @@ module.exports = {
   rejectRecipe,
   getAllUsers,
   deleteUser,
-  getAllContacts
+  getAllContacts,
+  getApprovedRecipes,
+  deleteApprovedRecipe,
+  updateApprovedRecipe
 };

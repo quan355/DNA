@@ -5,13 +5,13 @@ const getCategory = async (req, res) => {
     try {
         const categoryData = await Category.findOne({name: category});
         if(!categoryData) {
-            return res.status(404).json({message: ' Category not found' });
+            return res.status(404).json({message: ' Thiếu danh mục!' });
         }
         const items = await Item.find({menuId: categoryData.menuId});
         console.log(items);
         res.status(200).json(items);
     } catch (error) {
-        res.status(500).json({ message: 'No Category' });   
+        res.status(500).json({ message: 'Không tồn tại ' });   
     }
 }
 module.exports = {getCategory};

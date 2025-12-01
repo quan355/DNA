@@ -8,8 +8,8 @@ const DesktopNav = ({ menuItems, Logo }) => {
   // Lấy user từ localStorage
   const user = JSON.parse(localStorage.getItem('user') || 'null');
 
-  // So sánh userid với admin ID (theo cách bạn muốn)
-  const ADMIN_ID = '69145fe222296799e2c5f5d8'; // ← thay ID admin thật nếu cần
+  // ID admin (có thể chuyển ra file config sau này)
+  const ADMIN_ID = '69145fe222296799e2c5f5d8';
   const isAdmin = user && user._id === ADMIN_ID;
 
   const handleLogout = () => {
@@ -26,21 +26,21 @@ const DesktopNav = ({ menuItems, Logo }) => {
         <img src={Logo} alt="logo" className="h-10" />
       </a>
 
-      {/* MENU CHÍNH */}
+      {/* MENU CHÍNH – ĐÃ SỬA ĐỂ DÙNG ĐÚNG CẤU TRÚC OBJECT */}
       <ul className="flex gap-7">
-        {menuItems?.map((menu, index) => (
-          <li key={index}>
+        {menuItems?.map((item) => (
+          <li key={item.label}>
             <Link
-              to={`/${menu.toLowerCase()}`}
+              to={item.to} // dùng item.to thay vì tự động toLowerCase()
               className="font-medium capitalize text-secondary hover:text-indigo-600 transition"
             >
-              {menu}
+              {item.label}
             </Link>
           </li>
         ))}
       </ul>
 
-      {/* 1 DROPDOWN DUY NHẤT CHO CẢ USER & ADMIN */}
+      {/* PHẦN USER / ADMIN / LOGIN */}
       <div className="flex items-center">
         {user ? (
           <div className="relative group">
@@ -62,20 +62,21 @@ const DesktopNav = ({ menuItems, Logo }) => {
               </svg>
             </button>
 
-            {/* DROPDOWN GỘP */}
+            {/* Dropdown gộp */}
             <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-              {/* Mục chung */}
+              {/* Hồ sơ cá nhân */}
               <Link
                 to="/profile"
-                className="flex items-center gap-3 px-6 py-4 text-gray-700 hover:bg-indigo-50 transition "
+                className="flex items-center gap-3 px-6 py-4 text-gray-700 hover:bg-indigo-50 transition"
               >
                 <CgProfile className="text-xl" />
                 Hồ sơ cá nhân
               </Link>
-              {/* MỤC ADMIN – CHỈ HIỆN KHI LÀ ADMIN */}
+
+              {/* Chỉ hiện khi là Admin */}
               {isAdmin && (
                 <>
-                  <div className="border-t border-gray-200 ">
+                  <div className="border-t border-gray-200">
                     <Link
                       to="/adminprod"
                       className="flex items-center gap-3 px-6 py-4 text-gray-700 hover:bg-indigo-50 transition border-b"
@@ -102,16 +103,16 @@ const DesktopNav = ({ menuItems, Logo }) => {
             </div>
           </div>
         ) : (
-          /* LOGIN / SIGNUP */
+          /* Chưa đăng nhập → Đăng nhập / Đăng ký */
           <div className="flex items-center gap-4">
             <Link to="/login">
               <button className="text-secondary px-6 py-2.5 rounded-lg hover:bg-gray-100 transition font-medium">
-                Login
+                Đăng Nhập
               </button>
             </Link>
             <Link to="/signup">
               <button className="text-secondary px-6 py-2.5 rounded-lg hover:bg-gray-100 transition font-medium">
-                Sign Up
+                Đăng Ký
               </button>
             </Link>
           </div>

@@ -45,9 +45,9 @@ const AddProduct = () => {
 
     const formDataUpload = new FormData();
     formDataUpload.append('image', file);
-
     setUploadingImage(true);
-    try {
+    try {console.log('instructions gửi đi:', formData.instructions);
+console.log('sau stringify:', JSON.stringify(formData.instructions));
       const res = await axios.post('http://localhost:5000/api/upload', formDataUpload, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -78,14 +78,15 @@ const AddProduct = () => {
 
   // Thêm bước
   const addStep = () => {
-    if (currentStep.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        instructions: [...prev.instructions, currentStep.trim()]
-      }));
-      setCurrentStep('');
-    }
-  };
+  if (currentStep.trim()) {
+    // ĐẢM BẢO LUÔN THÊM CHUỖI, KHÔNG PHẢI JSON
+    setFormData(prev => ({
+      ...prev,
+      instructions: [...prev.instructions, currentStep.trim()]  // ← chỉ thêm string
+    }));
+    setCurrentStep('');
+  }
+};
 
   const removeStep = (i) => {
     setFormData(prev => ({
@@ -118,47 +119,43 @@ const AddProduct = () => {
 
   // Submit
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!formData.name.trim()) return alert('Nhập tên công thức');
-    if (!formData.thumbnail_image) return alert('Chọn ảnh hoặc nhập link ảnh');
-    if (!formData.category) return alert('Chọn danh mục');
-    if (formData.instructions.length === 0) return alert('Thêm ít nhất 1 bước hướng dẫn');
-    if (formData.ingredients.length === 0) return alert('Thêm ít nhất 1 nguyên liệu');
-    if (!formData.more.prep_time || !formData.more.cook_time || !formData.more.serving_time || !formData.more.difficulty) {
-      return alert('Điền đầy đủ thông tin bổ sung');
-    }
+  if (!formData.name.trim()) return alert('Nhập tên công thức!');
+  if (!formData.thumbnail_image) return alert('Chưa có ảnh bìa!');
+  if (formData.instructions.length === 0) return alert('Thêm ít nhất 1 bước làm!');
+  if (formData.ingredients.length === 0) return alert('Thêm ít nhất 1 nguyên liệu!');
 
-    setLoading(true);
+  // FIX 500 + LỖI MORE
+ const finalData = {
+  name: formData.name.trim(),
+  thumbnail_image: formData.thumbnail_image,
+  category: formData.category,
+  instructions: formData.instructions,
+  ingredients: formData.ingredients,
+  more: {
+    prep_time: formData.more.prep_time ,
+    cook_time: formData.more.cook_time ,
+    serving_time: formData.more.serving_time ,
+    difficulty: formData.more.difficulty ,
+    source: formData.more.source 
+  }
+};
 
-    const payload = {
-      name: formData.name.trim(),
-      thumbnail_image: formData.thumbnail_image,
-      category: formData.category,
-      instructions: formData.instructions.join('\n\n'),
-      ingredients: formData.ingredients,
-      more: {
-        prep_time: formData.more.prep_time.trim(),
-        cook_time: formData.more.cook_time.trim(),
-        serving_time: formData.more.serving_time.trim(),
-        difficulty: formData.more.difficulty.trim(),
-        source: formData.more.source.trim() || 'Người dùng chia sẻ'
-      },
-      createdBy: user._id
-    };
-
-    try {
-      await axios.post('http://localhost:5000/api/add-witem', payload, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      alert('Gửi công thức thành công! Đang chờ Admin duyệt...');
-      navigate('/profile');
-    } catch (err) {
-      alert(err.response?.data?.message || 'Lỗi gửi công thức');
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    await axios.post('http://localhost:5000/api/add-witem', finalData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    });
+    alert('Gửi công thức thành công! Chờ duyệt nhé!');
+    navigate('/profile');
+  } catch (err) {
+    console.error(err);
+    alert('Lỗi: ' + (err.response?.data?.message || 'Không thể gửi'));
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
@@ -233,18 +230,18 @@ const AddProduct = () => {
               required
             >
               <option value="">Chọn danh mục</option>
-              <option value="Entress">Entress</option>
-              <option value="Breakfast">Breakfast</option>
-              <option value="Lunch">Lunch</option>
-              <option value="Desserts">Desserts</option>
-              <option value="Side">Side</option>
-              <option value="Drinks">Drinks</option>
+              <option value="Entress">Khai Vị</option>
+              <option value="Breakfast">Bữa Sáng</option>
+              <option value="Lunch">Bữa Trưa</option>
+              <option value="Desserts">Tráng Miệng</option>
+              <option value="Side">Đồ Ăn Kèm</option>
+              <option value="Drinks">Thức Uống</option>
             </select>
           </div>
 
           {/* Hướng dẫn – từng bước */}
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-3">Hướng dẫn nấu (từng bước)</label>
+            <label className="block text-sm font-bold text-gray-700 mb-3">Hướng dẫn</label>
             <div className="flex gap-3 mb-4">
               <input
                 type="text"
@@ -274,13 +271,13 @@ const AddProduct = () => {
             <label className="block text-sm font-bold text-gray-700 mb-3">Nguyên liệu</label>
             <div className="flex gap-3 mb口碑-4">
               <input type="text" value={ingredientName} onChange={e => setIngredientName(e.target.value)} placeholder="Tên" className="flex-1 px-4 py-3 border rounded-lg" />
-              <input type="text" value={ingredientQuantity} onChange={e => setIngredientQuantity(e.target.value)} onKeyPress={e => e.key === 'Enter' && addIngredient()} placeholder="Số lượng" className="w-40 px-4 py-3 border rounded-lg" />
+              <input type="text" value={ingredientQuantity} onChange={e => setIngredientQuantity(e.target.value)} onKeyPress={e => e.key === 'Enter' && addIngredient()} placeholder="g" className="w-40 px-4 py-3 border rounded-lg" />
               <button type="button" onClick={addIngredient} className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700">Thêm</button>
             </div>
             <div className="space-y-2">
               {formData.ingredients.map((ing, i) => (
                 <div key={i} className="flex justify-between bg-green-50 p-3 rounded-lg border border-green-200">
-                  <span>{ing.name} — {ing.quantity}</span>
+                  <span>{ing.name} — {ing.quantity}g</span>
                   <button type="button" onClick={() => removeIngredient(i)} className="text-red-600">Xóa</button>
                 </div>
               ))}
@@ -294,7 +291,27 @@ const AddProduct = () => {
               <input value={formData.more.prep_time} onChange={e => setFormData({...formData, more: {...formData.more, prep_time: e.target.value}})} placeholder="Chuẩn bị" className="px-3 py-2 border rounded text-sm" required />
               <input value={formData.more.cook_time} onChange={e => setFormData({...formData, more: {...formData.more, cook_time: e.target.value}})} placeholder="Nấu" className="px-3 py-2 border rounded text-sm" required />
               <input value={formData.more.serving_time} onChange={e => setFormData({...formData, more: {...formData.more, serving_time: e.target.value}})} placeholder="Khẩu phần" className="px-3 py-2 border rounded text-sm" required />
-              <input value={formData.more.difficulty} onChange={e => setFormData({...formData, more: {...formData.more, difficulty: e.target.value}})} placeholder="Độ khó" className="px-3 py-2 border rounded text-sm" required />
+              {/* Độ khó – giống hệt select Danh mục, không hiệu ứng gì thêm */}
+<div>
+  <label className="block text-sm font-bold text-secondary mb-2">
+    Độ khó
+  </label>
+  <select
+    value={formData.more.difficulty}
+    onChange={e => setFormData({
+      ...formData,
+      more: { ...formData.more, difficulty: e.target.value }
+    })}
+    className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+    required
+  >
+    <option value="">Chọn độ khó</option>
+    <option value="Dễ">Dễ</option>
+    <option value="Trung bình">Trung bình</option>
+    <option value="Khó">Khó</option>
+    <option value="Siêu khó">Siêu khó</option>
+  </select>
+</div>
               <input value={formData.more.source} onChange={e => setFormData({...formData, more: {...formData.more, source: e.target.value}})} placeholder="Nguồn (tùy chọn)" className="px-3 py-2 border rounded text-sm" />
             </div>
           </div>
@@ -306,7 +323,7 @@ const AddProduct = () => {
               disabled={loading || uploadingImage}
               className={`px-16 py-5 text-xl font-bold text-white rounded-xl shadow-lg transition ${
                 loading || uploadingImage
-                  ? 'bg-gray-500 cursor-not-allowed'
+                  ? 'bg-white cursor-not-allowed'
                   : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700'
               }`}
             >

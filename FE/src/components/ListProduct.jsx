@@ -37,7 +37,7 @@ const ListProduct = ({
       setItems(dataItems);
       setPagination(dataPagination);
 
-      // IN RA CONSOLE ĐỂ CHECK DATA (rất quan trọng!)
+      // IN RA CONSOLE ĐỂ CHECK DATA 
       console.log('Data từ API:', res.data);
       console.log('Items sẽ render:', dataItems);
     } catch (err) {
@@ -97,7 +97,7 @@ const ListProduct = ({
         </div>
       )}
 
-      {/* PHÂN TRANG NHỎ GỌN */}
+      {/* PHÂN TRANG */}
       {pagination.totalPages > 1 && (
         <div className="flex justify-center items-center gap-3 mt-12">
           <button
@@ -105,7 +105,7 @@ const ListProduct = ({
             disabled={!pagination.hasPrev || loading}
             className={`p-3 rounded-lg ${pagination.hasPrev && !loading ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-gray-200 text-gray-400'}`}
           >
-            Prev
+            Trước
           </button>
 
           <div className="flex gap-2">
@@ -135,7 +135,7 @@ const ListProduct = ({
             disabled={!pagination.hasNext || loading}
             className={`p-3 rounded-lg ${pagination.hasNext && !loading ? 'bg-indigo-600 text-white hover:bg-indigo-700' : 'bg-gray-200 text-gray-400'}`}
           >
-            Next
+            Sau
           </button>
         </div>
       )}

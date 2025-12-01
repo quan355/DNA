@@ -1,19 +1,26 @@
-// controllers/commentController.js  ← DÙNG require + module.exports
+const Comment = require('../model/commentModel.js');  
 
-const Comment = require('../model/commentModel');  // ← đổi thành require
 
-// Helper: xây cây comment
+// Helper: xây cây comment 
 const buildCommentTree = (comments) => {
-  const map = {};
+  const map = new Map();
   const roots = [];
 
+  // Bước 1: Đưa tất cả comment vào map
   comments.forEach(c => {
-    c.replies = [];
-    map[c._id] = c;
-    if (!c.parentId) {
+    c.replies = [];          
+    map.set(c._id.toString(), c);
+  });
+
+  // Bước 2: Duyệt lại để gắn vào cha
+  comments.forEach(c => {
+    if (c.parentId) {
+      const parent = map.get(c.parentId.toString());
+      if (parent) {
+        parent.replies.push(c);
+      }
+    } else {
       roots.push(c);
-    } else if (map[c.parentId]) {
-      map[c.parentId].replies.push(c);
     }
   });
 
@@ -47,8 +54,8 @@ const createComment = async (req, res) => {
     const comment = new Comment({
       productId: req.params.productId,
       userId: req.user._id,
-      userName: req.user.name || req.user.username,
-      userAvatar: req.user.avatar || '',
+      userName: req.user.fullName || req.user.username,
+      userAvatar: req.user.profilePic || '',
       content: content.trim(),
       parentId: parentId || null,
     });
@@ -65,7 +72,7 @@ const createComment = async (req, res) => {
 const toggleLikeComment = async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.commentId);
-    if (!comment) return res.status(404).json({ message: 'Comment not found' });
+    if (!comment) return res.status(404).json({ message: 'Không có Comment' });
 
     const userIdStr = req.user._id.toString();
     const index = comment.likes.findIndex(id => id.toString() === userIdStr);
