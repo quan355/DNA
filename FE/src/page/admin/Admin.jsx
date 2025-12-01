@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiSearch, FiEdit3, FiTrash2, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('pending'); // pending | approved | users | contact
@@ -9,6 +10,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Phân trang
   const [currentPagePending, setCurrentPagePending] = useState(1);
@@ -171,7 +173,12 @@ const AdminDashboard = () => {
                         <h3 className="font-bold text-lg mb-2 line-clamp-2">{item.name}</h3>
                         <p className="text-sm text-gray-600">Danh mục: {item.category}</p>
                         <div className="mt-4 flex gap-3">
-                          
+                          <button
+                            onClick={() => navigate(`/admin/edit/${item._id}`)}  // ← THÊM DÒNG NÀY
+                            className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 flex items-center justify-center gap-2 font-medium"
+                          >
+                            <FiEdit3 /> Sửa
+                          </button>
                           <button onClick={() => deleteApproved(item._id)} className="flex-1 bg-red-600 text-white py-2.5 rounded-lg hover:bg-red-700 flex items-center justify-center gap-2 font-medium">
                             <FiTrash2 /> Xóa
                           </button>

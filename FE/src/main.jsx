@@ -23,6 +23,7 @@ import ForgotPassword from './page/client/ForgotPassword.jsx'
 import ResetPassword from './page/client/ResetPassword.jsx'
 import Admin from './page/admin/Admin.jsx'
 import UsersManager from './page/admin/UserManager.jsx'
+import EditApprovedItem from './page/products/EditApprovedItem.jsx'
 
 
 
@@ -100,6 +101,10 @@ const router = createBrowserRouter([
       {
         path:"/usermanager",
         element:<UsersManager/>,
+      },
+      {
+        path:"/admin/edit/:id",
+        element:<EditApprovedItem/>,
       }
     ]
   },

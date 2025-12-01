@@ -172,29 +172,23 @@ const deleteApprovedRecipe = async (req, res) => {
 // CẬP NHẬT (SỬA) CÔNG THỨC ĐÃ DUYỆT
 const updateApprovedRecipe = async (req, res) => {
   try {
-    const { name, category, instructions, ingredients, more } = req.body;
+    const updated = await Item.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true, runValidators: true }
+    );
 
-    const recipe = await Item.findById(req.params.id);
-    if (!recipe) {
+    if (!updated) {
       return res.status(404).json({ success: false, message: 'Không tìm thấy công thức' });
     }
 
-    // Cập nhật các field
-    if (name) recipe.name = name;
-    if (category) recipe.category = category;
-    if (instructions) recipe.instructions = instructions;
-    if (ingredients) recipe.ingredients = ingredients;
-    if (more) recipe.more = more;
-
-    await recipe.save();
-
     res.json({
       success: true,
-      message: 'Cập nhật công thức thành công',
-      data: recipe
+      message: 'Cập nhật thành công! Ảnh đã được lưu vĩnh viễn',
+      data: updated
     });
   } catch (err) {
-    console.error('Lỗi sửa công thức:', err);
+    console.error('Lỗi update:', err);
     res.status(500).json({ success: false, message: 'Lỗi server' });
   }
 };
