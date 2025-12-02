@@ -33,6 +33,7 @@ const accountSchema = new Schema({
     district: { type: String},
     resetPasswordToken: String,          
     resetPasswordExpires: Date,
+    savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Item' }]
 });
 // Mã hóa password trước khi lưu
 accountSchema.pre('save', async function (next) {

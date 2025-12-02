@@ -3,6 +3,8 @@ import {  useNavigate, Link } from 'react-router-dom';
 import profilePic from '../../assets/ava.png';
 import axios from 'axios';
 import SmartItemList from '../../components/SmartListProduct.jsx';
+import { FaHeart } from 'react-icons/fa';
+import SavedRecipes from '../../components/SavedRecipes.jsx';
 
 const token = localStorage.getItem('token');
 
@@ -24,9 +26,22 @@ useEffect(() => {
   window.addEventListener('storage', handleStorageChange);
   return () => window.removeEventListener('storage', handleStorageChange);
 }, []);
+// Lấy danh sách công thức đã lưu
+  const [activeTab, setActiveTab] = useState('saved');
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  useEffect(() => {
+  if (token && user?._id) {
+    axios.get('http://localhost:5000/api/user', {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+      setSavedItems(res.data.data || []);
+    }).catch(() => {
+      setSavedItems([]);
+    }).finally(() => setSavedLoading(false));
+  }
+}, [token, user]);
   useEffect(() => {
   const userId = user?._id;
 
@@ -121,7 +136,7 @@ const openEdit = () => {
 // Lưu thay đổi (chỉ gửi những field được phép)
 const handleSave = async () => {
   try {
-    const res = await axios.put('http://localhost:5000/api/users/update', editData, {
+    const res = await axios.put('http://localhost:5000/api/user/update', editData, {
       headers: { Authorization: `Bearer ${token}` }
     });
     const updatedUserFromServer = res.data.user;
@@ -151,13 +166,13 @@ const handleSave = async () => {
               <div className="mt-8 space-y-4 w-full max-w-xs">
                 <Link to="/create">
               <button className="w-full bg-[#9c702a] text-white font-bold py-3 rounded-xl hover:bg-[#825102] transition shadow-lg text-lg">
-                  Create Recipes
+                  Tạo Công Thức
                 </button>
               </Link>
               </div>
               <div className="mt-1 space-y-4 w-full max-w-xs">
               <button onClick={openEdit} className="w-full bg-[#9c702a] text-white font-bold py-3 rounded-xl hover:bg-[#825102] transition shadow-lg text-lg">
-                  Edit Profile
+                  Chỉnh Sửa Hồ Sơ
                 </button>
               </div>
               
@@ -186,9 +201,28 @@ const handleSave = async () => {
           </div>
         </div>
        <div className="mt-20">
-  <SmartItemList userId={user._id} />
+  
           </div>
       </div>
+      <div className="mt-16">
+          <button
+            onClick={() => setActiveTab('saved')}
+            className={`... ${activeTab === 'saved' ? 'text-orange-600 border-b-4 border-orange-600' : ''}`}
+          >
+            Công thức đã lưu 
+          </button>
+          <button
+            onClick={() => setActiveTab('created')}
+            className={`tab-button ${activeTab === 'created' ? 'text-orange-600 border-b-4 border-orange-600' : ''}`}
+          >
+            Công thức đã tạo
+          </button>
+          
+          {activeTab === 'saved' && <SavedRecipes />}
+          {
+            activeTab === 'created' && <SmartItemList userId={user._id} />
+          }
+        </div>
           {/* ================== MODAL CHỈNH SỬA ================== */}
           {isEditModal && (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

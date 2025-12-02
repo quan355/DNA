@@ -1,4 +1,5 @@
 const User = require('../model/accountModel'); 
+const Item = require('../model/ItemModel');
 const updateProfile = async (req, res) => {
   try {
     const userId = req.user.id; 
@@ -37,5 +38,47 @@ const updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Có lỗi xảy ra, vui lòng thử lại!' });
   }
 };
+const toggleSaveRecipe = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+    const recipeId = req.params.id;
 
-module.exports = { updateProfile };
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ success: false, message: 'User không tồn tại' });
+
+    const recipe = await Item.findById(recipeId);
+    if (!recipe) return res.status(404).json({ success: false, message: 'Công thức không tồn tại' });
+
+    const isSaved = user.savedRecipes.includes(recipeId);
+
+    if (isSaved) {
+      user.savedRecipes = user.savedRecipes.filter(id => id.toString() !== recipeId);
+      await user.save();
+      return res.json({ success: true, saved: false, message: 'Đã bỏ lưu' });
+    } else {
+      user.savedRecipes.push(recipeId);
+      await user.save();
+      return res.json({ success: true, saved: true, message: 'Đã lưu công thức!' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
+
+// Lấy danh sách công thức đã lưu
+const getSavedRecipes = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId).populate({
+      path: 'savedRecipes',
+      populate: { path: 'createdBy', select: 'fullName profilePic' }
+    });
+
+    res.json({ success: true, data: user.savedRecipes || [] });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Lỗi server' });
+  }
+};
+
+module.exports = { updateProfile, toggleSaveRecipe, getSavedRecipes };

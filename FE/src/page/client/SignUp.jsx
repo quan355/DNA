@@ -52,8 +52,8 @@ const SignUp = () => {
       {/* Left Side - Gradient */}
       <div className="relative overflow-hidden md:flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 justify-around items-center hidden">
         <div>
-          <h1 className="text-white font-bold text-4xl font-sans">GoFinance</h1>
-          <p className="text-white mt-1">Cho vay P2P hàng đầu Đông Nam Á</p>
+          <h1 className="text-white font-bold text-4xl font-sans">DNA</h1>
+          <p className="text-white mt-1">Chứa tất cả cá công thức món ăn</p>
           <button
             type="button"
             className="block w-28 bg-white text-indigo-800 mt-4 py-2 rounded-2xl font-bold mb-2 hover:bg-gray-100 transition"
@@ -71,7 +71,7 @@ const SignUp = () => {
       <div className="flex md:w-1/2 justify-center py-10 items-center bg-white">
         <form onSubmit={handleSubmit} className="bg-white max-w-md w-full px-6">
           <h1 className="text-gray-800 font-bold text-2xl mb-1">Tạo tài khoản mới</h1>
-          <p className="text-sm font-normal text-gray-600 mb-7">Tham gia GoFinance ngay hôm nay!</p>
+          <p className="text-sm font-normal text-gray-600 mb-7">Tham ngay hôm nay!</p>
 
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">

@@ -44,7 +44,7 @@ const AdminRoutes = require('./src/routes/adminRoute');
 const ContactRoutes = require('./src/routes/contactRoute');
 
 app.use('/uploads', express.static('uploads'));
-app.use('/api/users', UserRoutes);
+app.use('/api/user', UserRoutes);
 app.use('/api/admin',AdminRoutes );
 app.use('/api', UploadRoutes);
 app.use('/api', CategoryRoutes);            
